@@ -1,7 +1,26 @@
-# TrailerFeed
-Uses Apple movie trailers to download and sync to local folder
+Trailer Feed
+=========
+Movie trailer sync to local folder
 
- -- Example usage --
- ./trailerfeed.py ~/Videos/Trailers
- 
- the above will then fetch all trailers from 'Just Added' on Apple Movie Trailers and download to ~/Videos/Trailers
+
+Example usage
+```
+    ./trailerfeed.py /home/ryan/Videos/Trailers
+
+```
+
+The above will then download any trailers on the 'Just Added' list which are not in the local folder
+
+Tools used
+--------------
+[pytrailer](https://github.com/sochotnicky/pytrailer)
+[requests](https://github.com/kennethreitz/requests)
+
+
+License
+----
+
+[BSD 3-Clause](http://www.opensource.org/licenses/BSD-3-Clause)
+
+
+

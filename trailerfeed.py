@@ -62,7 +62,6 @@ def downloadLinkForMovie(aptMovie):
     downloadRes = 0
     
     for trailerUrl in allTrailers:
-        print 'URL ' + trailerUrl
         res = 480
 
         if '720p' in trailerUrl:
@@ -82,15 +81,30 @@ def downloadUrlToPath(url,savePath):
 
     r = requests.get(url, headers=headers, allow_redirects=True, stream=True)
 
-    if r.status_code == 200:
-        with open(savePath, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024): 
-                    if chunk: # filter out keep-alive new chunks
-                        f.write(chunk)
-                        f.flush()
-                        os.fsync(f.fileno())
-    else:
+    if r.status_code != 200:
         logging.error('Failed to get correct response: ' + str(r.status_code))
+        return;
+    
+    if not r.headers.get('content-length'): # no content length header
+        with open(savePath, 'wb') as f:
+            f.write(r.content)
+    else:
+        responseCurrent = 0
+        responseSize = int(r.headers.get('content-length'))
+        
+        with open(savePath, 'wb') as f:
+            for data in r.iter_content(chunk_size=1024):
+                responseCurrent += len(data)
+                done = int(50 * responseCurrent / responseSize)
+
+                sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )
+                sys.stdout.flush()        
+ 
+                f.write(data)
+                f.flush()
+                os.fsync(f.fileno())
+    
+    logging.info('\n saved file ' + str(savePath))
 
     return
 

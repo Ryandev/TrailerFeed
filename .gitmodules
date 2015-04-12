@@ -1,0 +1,3 @@
+[submodule "dependencies/pytrailer"]
+	path = dependencies/pytrailer
+	url = https://github.com/sochotnicky/pytrailer.git

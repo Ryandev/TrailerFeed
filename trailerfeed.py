@@ -11,8 +11,11 @@ import datetime
 
 dirname = os.path.dirname(os.path.realpath( __file__ ))
 sys.path.append( os.path.join(dirname,"dependencies") )
+
 sys.path.append( os.path.join(dirname,"dependencies","pytrailer") )
 import pytrailer
+
+sys.path.append( os.path.join(dirname,"dependencies","requests") )
 import requests
 
 

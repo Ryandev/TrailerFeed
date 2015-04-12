@@ -23,8 +23,9 @@ def usage():
     return '''
 usage: [-v] disc
     -h --help  Prints this usage information.
+    -s Preferred height of video either 480/720/1080 valid values. Default 1080
     -v --verbose       print extra information
-example: ./trailerfeed.py -v /dev/disk2
+example: ./trailerfeed.py -s 720 ~/Movies/Trailers
 '''
 
 def isInternetConnectionAvailable():
@@ -50,7 +51,17 @@ def fileNameForMovie(aptMovie):
 
     return fileName
 
-def downloadLinkForMovie(aptMovie):
+def downloadLinkForMovie(aptMovie,preferredResolution=1080):
+    #Only 3 resolutions supported 480,720,1080.
+    if preferredResolution > 1080:
+        preferredResolution = 1080
+    elif preferredResolution > 720:
+        preferredResolution = 1080
+    elif preferredResolution > 480:
+        preferredResolution = 720
+    else:
+        preferredResolution = 480
+    
     allTrailers = []
     
     try:
@@ -71,6 +82,12 @@ def downloadLinkForMovie(aptMovie):
             
         if res > downloadRes:
             downloadLink = trailerUrl
+            
+        if downloadRes >= preferredResolution:
+            break
+    
+    if downloadRes < preferredResolution:
+        downloadLink = downloadLink.replace('480p.',str(preferredResolution)+'p.')
 
     return downloadLink
 
@@ -120,6 +137,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     savePath=''
+    height=1080
 
     argsList = sys.argv[1:]
     
@@ -134,6 +152,15 @@ if __name__ == "__main__":
 
         elif arg == '-v' or arg == '--v' or arg == '--verbose':
             loggingLevel = "debug"
+            
+        elif arg == '-s':
+            argsList = argsList[1:]
+            try:
+                height = int(argsList[0])
+            except ValueError as e:
+                print usage()
+                print 'Invalid argument for -s. Must be a number'
+                sys.exit(2)
 
         else:
             savePath = arg
@@ -155,7 +182,7 @@ if __name__ == "__main__":
     aptMovies = pytrailer.getMoviesFromJSON('http://trailers.apple.com/trailers/home/feeds/just_added.json')
     
     for movie in aptMovies:
-        urlFetch = downloadLinkForMovie(movie)
+        urlFetch = downloadLinkForMovie(movie,height)
 
         aptSaveName = fileNameForMovie(movie)
         
@@ -171,7 +198,7 @@ if __name__ == "__main__":
             #Download movie
             logging.info('Downloading ' + aptSaveName + ', ' + str(urlFetch))
             downloadUrlToPath(urlFetch,aptSavePath)
-    
+
     print ' -- Done -- '
     sys.exit(0)
 

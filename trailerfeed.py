@@ -192,7 +192,7 @@ if __name__ == "__main__":
         aptSaveName = fileNameForMovie(movie)
         
         if '.' in urlFetch:
-            aptSaveName += '.' + urlFetch.split('.')[-1]
+            aptSaveName += '.' + urlFetch.split('.')[-1].lower()
         else:
             #Assume mov
             aptSaveName += '.mov'

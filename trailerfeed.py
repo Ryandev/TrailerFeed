@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import shutil
+import string
 import logging
 import datetime
 
@@ -37,6 +38,10 @@ def isInternetConnectionAvailable():
     except urllib2.URLError as err:
         return False
 
+def removeInvalidCharsFromFilename(fileName):
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    newFileName = ''.join(c for c in fileName if c in valid_chars)
+    return newFileName
 
 def fileNameForMovie(aptMovie):
     title = aptMovie.title
@@ -49,7 +54,7 @@ def fileNameForMovie(aptMovie):
     
     fileName = str(title) + ' (' + year + ')'
 
-    return fileName
+    return removeInvalidCharsFromFilename(fileName)
 
 def downloadLinkForMovie(aptMovie,preferredResolution=1080):
     #Only 3 resolutions supported 480,720,1080.

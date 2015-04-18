@@ -138,7 +138,7 @@ if __name__ == "__main__":
         sys.exit(1)
         
     if isInternetConnectionAvailable() == False:
-        print '''No internet connection found. Ripsnort requires internet access to run'''
+        print '''No internet connection found. TrailerFeed requires internet access to run'''
         sys.exit(1)
 
     savePath=''

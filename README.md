@@ -5,7 +5,7 @@ Movie trailer sync to local folder
 
 Example usage
 ```
-    ./trailerfeed.py /home/ryan/Videos/Trailers
+    ./trailerfeed.py -s 1080 /home/ryan/Videos/Trailers
 
 ```
 

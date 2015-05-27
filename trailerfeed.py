@@ -107,10 +107,7 @@ def downloadUrlToPath(url,savePath):
         logging.error('Failed to get correct response: ' + str(r.status_code))
         return;
     
-    if not r.headers.get('content-length'): # no content length header
-        with open(savePath, 'wb') as f:
-            f.write(r.content)
-    else:
+    if r.headers.get('content-length'): # no content length header
         responseCurrent = 0
         responseSize = int(r.headers.get('content-length'))
         
@@ -125,10 +122,12 @@ def downloadUrlToPath(url,savePath):
                 f.write(data)
                 f.flush()
                 os.fsync(f.fileno())
+    else:
+        '''No content length, just write out what we have '''
+        with open(savePath, 'wb') as f:
+            f.write(r.content)
     
     logging.info('\n saved file ' + str(savePath))
-
-    return
 
 if __name__ == "__main__":
     
@@ -183,28 +182,28 @@ if __name__ == "__main__":
     elif loggingLevel == "info":
         logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
         
-    logging.info('Fetching all trailers...')
     aptMovies = pytrailer.getMoviesFromJSON('http://trailers.apple.com/trailers/home/feeds/just_added.json')
+    logging.info('Retrieved details for ' + str(len(aptMovies)) + ' movies')
     
     for movie in aptMovies:
         urlFetch = downloadLinkForMovie(movie,height)
 
         aptSaveName = fileNameForMovie(movie)
         
+        '''Get file extension from end of url, otherwise assume mov'''
         if '.' in urlFetch:
             aptSaveName += '.' + urlFetch.split('.')[-1].lower()
         else:
-            #Assume mov
             aptSaveName += '.mov'
         
         aptSavePath = os.path.join(savePath,aptSaveName)
         
         if (not os.path.exists(aptSavePath)) and urlFetch:
             #Download movie
-            logging.info('Downloading ' + aptSaveName + ', ' + str(urlFetch))
+            logging.info('Downloading ' + str(urlFetch) + ' as ' + str(aptSaveName))
             downloadUrlToPath(urlFetch,aptSavePath)
 
-    print ' -- Done -- '
+    logging.info(' -- Done -- ')
     sys.exit(0)
 
 

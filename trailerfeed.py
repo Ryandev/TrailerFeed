@@ -54,7 +54,7 @@ def fileNameForMovie(aptMovie):
     
     fileName = str(title) + ' (' + year + ')'
 
-    return removeInvalidCharsFromFilename(fileName)
+    return removeInvalidCharsFromFilename(fileName).replace('  ',' ')
 
 def downloadLinkForMovie(aptMovie,preferredResolution=1080):
     #Only 3 resolutions supported 480,720,1080.
